@@ -11,8 +11,7 @@ v = 0;
 teta = 0;
 s = 1;
 
-a0 = [ u ; v ; teta; s]
-size  = size(a0)
+a0 = [ u ; v ; teta; s];
 
 
 % Creation de la région d'intéret
@@ -51,9 +50,9 @@ S=[(1/s).*Rtr(1,1) (1/s).*Rtr(1,2) 0 0;(1/s)*Rtr(2,1) (1/s)*Rtr(2,2) 0 0;0 0 1 0
 % Calcul de G(x)
 
 
-taille=size(imgIntensite);
-nbligne=taille(1);
-nbcolonne=taille(2);
+[taillex , tailley] = size(imgIntensite)
+nbligne=taillex;
+nbcolonne=tailley;
 
 
 Gx=zeros(2*nbligne*nbcolonne,4);
@@ -63,7 +62,7 @@ for i=1:1:nbligne
         X=[i;j];
         G=[1 0 -X(2) X(1);0 1 X(1) X(2)]; 
         
-        Gx(i,j)=G;
+        Gx(i+j*nbligne,:)=G;
        
         %J=GradI.*G.*S;
     end
