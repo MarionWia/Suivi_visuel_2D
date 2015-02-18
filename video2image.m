@@ -3,7 +3,7 @@
 
 close all;
 clear all;
-
+%coucou
 
 %vidObj = VideoReader('respiration.wmv');
 %get(vidObj);
