@@ -11,6 +11,11 @@ Gx = conv2(Sx,intensity_matrix);
 Gy = conv2(Sy,intensity_matrix);
 
 gradI = sqrt((Gx.*Gx)+(Gy.*Gy)); % module du gradient
+figure;
+imshow(gradI,[]);
+title('Image filtree avec G');
+
+
 
 end
 

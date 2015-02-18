@@ -38,4 +38,8 @@ imgIntensite = 0.21*R2 + 0.72*V2 + 0.07*B2;
 figure;
 imshow(imgIntensite);
 
-gradIm = gradient(imgIntensite)
+imgIntensiteDouble = double(imgIntensite);
+figure;
+imshow(imgIntensiteDouble);
+
+gradIm = gradient(imgIntensiteDouble)
