@@ -55,16 +55,19 @@ nbligne=taillex;
 nbcolonne=tailley;
 
 
-%Gx=zeros(2*nbligne*nbcolonne,4);
-
+Gx=zeros(2*nbligne*nbcolonne,4);
 G = [];
 for i=1:nbligne
     for j=1:nbcolonne
+        X=[i;j];
+        G=[G;1 0 -X(2) X(1);0 1 X(1) X(2)]; 
         
-        G=[G;1 0 -j i;0 1 i j]; 
-            
+        Gx
+       
+       
+        %J=GradI.*G.*S;
     end
 end
  
  
-  Jo=gradIm.'.*G;
+ 
