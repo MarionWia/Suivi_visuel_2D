@@ -7,15 +7,10 @@ function [ gradI ] = gradient( intensity_matrix )
 Sx = [1 0 -1 ; 2 0 -2 ; 1 0 -1];
 Sy = [1 2 1 ; 0 0 0 ; -1 -2 -1];
 
-Gx = conv2(Sx,intensity_matrix);
-Gy = conv2(Sy,intensity_matrix);
+gradIx = conv2(Sx,intensity_matrix);
+gradIy = conv2(Sy,intensity_matrix);
 
-gradI = sqrt((Gx.*Gx)+(Gy.*Gy)); % module du gradient
-figure;
-imshow(gradI,[]);
-title('Image filtree avec G');
-
-
+gradI = [gradIx ; gradIy]; % vecteur gradient 1*2
 
 end
 
