@@ -38,8 +38,16 @@ imgIntensite = 0.21*R2 + 0.72*V2 + 0.07*B2;
 figure;
 imshow(imgIntensite);
 
-gradIm = gradient(imgIntensite);
-
+[gradIx , gradIy] = gradient(imgIntensite);
+% Enlever les bords qui ont été rajouté avec le calcul du gradient
+tailleGrad = size(gradIx)
+gradIxDim = gradIx(2:(tailleGrad(1,1)-1) , 2:(tailleGrad(1,2)-1));
+dim = size(gradIxDim);
+gradIyDim = gradIy(2:(tailleGrad(1,1)-1) , 2:(tailleGrad(1,2)-1));
+% Modifier la taille de la matrice: créer un vecteur ligne
+gradIx1 = reshape(gradIxDim,dim(1,1)*dim(1,2),1);
+gradIy1 = reshape(gradIyDim,dim(1,1)*dim(1,2),1);
+gradIm = [gradIx1; gradIy1];
 Rtr=[cos(teta) sin(teta);-sin(teta) cos(teta)];
 
 S=[(1/s).*Rtr(1,1) (1/s).*Rtr(1,2) 0 0;(1/s)*Rtr(2,1) (1/s)*Rtr(2,2) 0 0;0 0 1 0;0 0 0 1/s];
@@ -50,9 +58,9 @@ S=[(1/s).*Rtr(1,1) (1/s).*Rtr(1,2) 0 0;(1/s)*Rtr(2,1) (1/s)*Rtr(2,2) 0 0;0 0 1 0
 % Calcul de G(x)
 
 
-[taillex , tailley] = size(imgIntensite)
-nbligne=taillex;
-nbcolonne=tailley;
+taille = size(imgIntensite)
+nbligne=taille(1,1);
+nbcolonne=taille(1,2);
 
 
 %Gx=zeros(2*nbligne*nbcolonne,4);
@@ -66,5 +74,5 @@ for i=1:nbligne
     end
 end
  
- 
-  Jo=gradIm.'.*G;
+ gradImTranspose = gradIm';
+  Jo=gradImTranspose*G;

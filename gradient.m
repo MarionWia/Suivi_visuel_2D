@@ -1,6 +1,6 @@
 % ----- Calcul du gradient avec l'information d'intensite
 
-function [ gradI ] = gradient( intensity_matrix )
+function [ gradIx , gradIy] = gradient( intensity_matrix )
 
 % On applique les filtres Sx et Sy : filtres de Sobel
 
