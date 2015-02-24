@@ -1,6 +1,6 @@
 % ----- Calcul du gradient avec l'information d'intensite
 
-function [ gradIx,gradIy ] = gradient( intensity_matrix )
+function [ gradIx , gradIy] = gradient( intensity_matrix )
 
 % On applique les filtres Sx et Sy : filtres de Sobel
 
@@ -10,12 +10,7 @@ Sy = [1 2 1 ; 0 0 0 ; -1 -2 -1];
 gradIx = conv2(Sx,intensity_matrix);
 gradIy = conv2(Sy,intensity_matrix);
 
-gradI = sqrt((gradIx.*gradIx)+(gradIy.*gradIy)); % module du gradient
-figure;
-imshow(gradI,[]);
-title('Image filtree avec G');
-
-
-
-end
+gradI = [gradIx ; gradIy]; % vecteur gradient 1*2
+tailleGradI = size(grad
+I)end
 

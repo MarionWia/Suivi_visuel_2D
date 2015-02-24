@@ -1,6 +1,6 @@
 % ----- Calcul du gradient avec l'information d'intensite
 
-function [ gradIx , gradIy] = gradient( intensity_matrix )
+function [ gradIm ] = gradient( intensity_matrix )
 
 % On applique les filtres Sx et Sy : filtres de Sobel
 
@@ -10,7 +10,19 @@ Sy = [1 2 1 ; 0 0 0 ; -1 -2 -1];
 gradIx = conv2(Sx,intensity_matrix);
 gradIy = conv2(Sy,intensity_matrix);
 
-gradI = [gradIx ; gradIy]; % vecteur gradient 1*2
+ % gradI = [gradIx ; gradIy]; % vecteur gradient 1*2
+
+% Enlever les bords qui ont été rajouté avec le calcul du gradient
+tailleGrad = size(gradIx);
+gradIxDim = gradIx(2:(tailleGrad(1,1)-1) , 2:(tailleGrad(1,2)-1));
+dim = size(gradIxDim);
+gradIyDim = gradIy(2:(tailleGrad(1,1)-1) , 2:(tailleGrad(1,2)-1));
+
+% Modifier la taille de la matrice: créer un vecteur ligne
+gradIx1 = reshape(gradIxDim,dim(1,1)*dim(1,2),1);
+gradIy1 = reshape(gradIyDim,dim(1,1)*dim(1,2),1);
+gradIm = [gradIx1 ; gradIy1];
+
 
 end
 
