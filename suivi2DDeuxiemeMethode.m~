@@ -15,7 +15,7 @@ a0 = [ u ; v ; teta; s];
 
 
 % Creation de la région d'intéret
-I = imcrop(imgInit);
+[I,rect] = imcrop(imgInit);
 imshow(I);
 
 % Conversion de l'image en couleur en intensité
@@ -37,15 +37,10 @@ I1 = 0.21*R1 + 0.72*V1 + 0.07*B1;
 imgIntensite = 0.21*R2 + 0.72*V2 + 0.07*B2;
 figure;
 imshow(imgIntensite);
+title('Image intensite de la region d''interet selectionnee sur l''image originale');
 
-[gradIx , gradIy] = gradient(imgIntensite);
-tailleGrad = size(gradIx)
-gradIxDim = gradIx(2:(tailleGrad(1,1)-1) , 2:(tailleGrad(1,2)-1));
-dim = size(gradIxDim);
-gradIyDim = gradIy(2:(tailleGrad(1,1)-1) , 2:(tailleGrad(1,2)-1));
-gradIx1 = reshape(gradIxDim,dim(1,1)*tailleGrad(1,2),1);
-gradIy1 = reshape(gradIyDim,dim(1,1)*tailleGrad(1,2),1);
-gradIm = [gradIx1; gradIy1];
+[gradIm] = gradient(imgIntensite);
+
 Rtr=[cos(teta) sin(teta);-sin(teta) cos(teta)];
 
 S=[(1/s).*Rtr(1,1) (1/s).*Rtr(1,2) 0 0;(1/s)*Rtr(2,1) (1/s)*Rtr(2,2) 0 0;0 0 1 0;0 0 0 1/s];
@@ -53,24 +48,43 @@ S=[(1/s).*Rtr(1,1) (1/s).*Rtr(1,2) 0 0;(1/s)*Rtr(2,1) (1/s)*Rtr(2,2) 0 0;0 0 1 0
 
 % Calcul de Jo 
 
-% Calcul de G(x)
 
 
-taille = size(imgIntensite)
+taille = size(imgIntensite);
 nbligne=taille(1,1);
 nbcolonne=taille(1,2);
-
+nbPixel = nbligne*nbcolonne;
 
 %Gx=zeros(2*nbligne*nbcolonne,4);
-
+% Prendre les pixels par rapport au centre de la zone
+ centreImCrop = []
+ centreImCrop(1,1) = rect(1,1)+ nbcolonne/2,
+ centreImCrop(1,2) = rect(1,2)+ nbligne/2,
 G = [];
 for i=1:nbligne
     for j=1:nbcolonne
         
-        G=[G;1 0 -j i;0 1 i j]; 
+        G=[G;1 0 -(j- i;0 1 i j]; 
             
     end
 end
+ %Jo =[nbPixel;4];
  
- 
-  Jo=gradIm.'.*G;
+for i =1:nbPixel
+    j = 2*i;
+    u = (gradIm(j-1:j, :))';
+    v = G(j-1:j,:);
+    Jo(i,:) = u*v;
+    
+end
+ gradImTranspose = gradIm';
+  %Jo=gradImTranspose*G;
+  
+  
+  % Calcul de la pseudo-inverse de J0
+  
+  JoTrans = Jo';
+  tmp = JoTrans*Jo;
+  
+  JoPseudoInv = inv(tmp)*JoTrans;
+  

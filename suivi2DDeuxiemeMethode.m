@@ -15,7 +15,7 @@ a0 = [ u ; v ; teta; s];
 
 
 % Creation de la région d'intéret
-I = imcrop(imgInit);
+[I,rect] = imcrop(imgInit);
 imshow(I);
 
 % Conversion de l'image en couleur en intensité
@@ -53,21 +53,33 @@ S=[(1/s).*Rtr(1,1) (1/s).*Rtr(1,2) 0 0;(1/s)*Rtr(2,1) (1/s)*Rtr(2,2) 0 0;0 0 1 0
 taille = size(imgIntensite);
 nbligne=taille(1,1);
 nbcolonne=taille(1,2);
-
+nbPixel = nbligne*nbcolonne;
 
 %Gx=zeros(2*nbligne*nbcolonne,4);
-
+% Prendre les pixels par rapport au centre de la zone
+ centreImCrop = []
+ centreImCrop(1,1) = rect(1,1)+ nbcolonne/2,
+ centreImCrop(1,2) = rect(1,2)+ nbligne/2,
 G = [];
 for i=1:nbligne
     for j=1:nbcolonne
-        
-        G=[G;1 0 -j i;0 1 i j]; 
+        jTranslate = j - nbcolonne/2;
+        iTranslate = i - nbligne/2;
+        G=[G;1 0 -jTranslate iTranslate;0 1 iTranslate jTranslate]; 
             
     end
 end
+ %Jo =[nbPixel;4];
  
+for i =1:nbPixel
+    j = 2*i;
+    u = (gradIm(j-1:j, :))';
+    v = G(j-1:j,:);
+    Jo(i,:) = u*v;
+    
+end
  gradImTranspose = gradIm';
-  Jo=gradImTranspose*G;
+  %Jo=gradImTranspose*G;
   
   
   % Calcul de la pseudo-inverse de J0
@@ -75,5 +87,5 @@ end
   JoTrans = Jo';
   tmp = JoTrans*Jo;
   
-  JoPseudoInv = tmp*JoTrans;
+  JoPseudoInv = inv(tmp)*JoTrans;
   
