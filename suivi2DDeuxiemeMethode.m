@@ -1,9 +1,9 @@
 clear all;
 close all;
 
-imgInit = imread('imageOriginale_respiration.jpg');
+imgInit = imread('imageOriginale_respiration.jpg');% Image N°1
 imshow(imgInit);
-img = imread('image300_respiration.jpg');
+img = imread('image300_respiration.jpg');% Image N°2
 figure;
 imshow(img);
 u = 0;
@@ -32,9 +32,9 @@ V2 = I(:,:,2);
 B2 = I(:,:,3);
 
 % On creer une image intensite a partir de l'image originale
-Iinit = 0.21*R + 0.72*V + 0.07*B;
-I1 = 0.21*R1 + 0.72*V1 + 0.07*B1;
-imgIntensite = 0.21*R2 + 0.72*V2 + 0.07*B2;
+Iinit = 0.21*R + 0.72*V + 0.07*B;% Image N°1
+I1 = 0.21*R1 + 0.72*V1 + 0.07*B1;% Image N°2
+imgIntensite = 0.21*R2 + 0.72*V2 + 0.07*B2; % Image région d'intérêt
 figure;
 imshow(imgIntensite);
 title('Image intensite de la region d''interet selectionnee sur l''image originale');
@@ -69,6 +69,7 @@ for i=1:nbligne
             
     end
 end
+
  %Jo =[nbPixel;4];
  
 for i =1:nbPixel
@@ -77,10 +78,7 @@ for i =1:nbPixel
     v = G(j-1:j,:);
     Jo(i,:) = u*v;
     
-end
- gradImTranspose = gradIm';
-  %Jo=gradImTranspose*G;
-  
+end 
   
   % Calcul de la pseudo-inverse de J0
   
@@ -89,3 +87,31 @@ end
   
   JoPseudoInv = inv(tmp)*JoTrans;
   
+
+% Calcul de l'erreur entre R(to) et R(t+dt)
+
+% Image (N°1) Initiale Intensité à to: Iinit
+% Image (N°2) à t+dt : I1
+
+close all;
+% test
+figure;
+subplot(3,1,1)
+imshow(Iinit);
+title('Image à to');
+subplot(3,1,2)
+imshow(I1);
+title('Image à t+dt');
+
+% matrice erreur
+m_Erreur=Iinit-I1;
+
+subplot(3,1,3)
+imshow(m_Erreur);
+title('erreur');
+
+% Calcul de l'inverse de S
+Sinv=inv(S);
+
+% Calcul de delta_a
+delta_a=Sinv*JoPseudoInv*m_Erreur;
