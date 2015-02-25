@@ -61,7 +61,7 @@ G = [];
 for i=1:nbligne
     for j=1:nbcolonne
         
-        G=[G;1 0 -j i;0 1 i j]; 
+        G = [G;1 0 -j i;0 1 i j]; 
             
     end
 end
@@ -74,6 +74,10 @@ end
   
   JoTrans = Jo';
   tmp = JoTrans*Jo;
+  inVtmp = inv(tmp);
   
-  JoPseudoInv = tmp*JoTrans;
+  JoPseudoInv = inVtmp*JoTrans;
+  
+  
+
   
