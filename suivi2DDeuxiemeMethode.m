@@ -63,14 +63,13 @@ nbPixel = nbligne*nbcolonne;
 G = [];
 for i=1:nbligne
     for j=1:nbcolonne
-<<<<<<< HEAD
         
         G = [G;1 0 -j i;0 1 i j]; 
-=======
+
         jTranslate = j - nbcolonne/2;
         iTranslate = i - nbligne/2;
         G=[G;1 0 -jTranslate iTranslate;0 1 iTranslate jTranslate]; 
->>>>>>> origin/master
+
             
     end
 end
@@ -87,6 +86,7 @@ end
   
   % Calcul de la pseudo-inverse de J0
   
+
   JoTrans = Jo';
   tmp = JoTrans*Jo;
   inVtmp = inv(tmp);
@@ -99,6 +99,12 @@ end
 =======
   JoPseudoInv = inv(tmp)*JoTrans;
 >>>>>>> origin/master
+=======
+  %JoTrans = Jo';
+  %tmp = JoTrans*Jo;
+  
+  JoPseudoInv = pinv(Jo);
+>>>>>>> Stashed changes
   
 
 % Calcul de l'erreur entre R(to) et R(t+dt)
