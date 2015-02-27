@@ -63,6 +63,12 @@ nbPixel = nbligne*nbcolonne;
 G = [];
 for i=1:nbligne
     for j=1:nbcolonne
+<<<<<<< HEAD
+=======
+        
+        G = [G;1 0 -j i;0 1 i j]; 
+
+>>>>>>> origin/master
         jTranslate = j - nbcolonne/2;
         iTranslate = i - nbligne/2;
         G=[G;1 0 -jTranslate iTranslate;0 1 iTranslate jTranslate]; 
@@ -83,6 +89,7 @@ end
   
   % Calcul de la pseudo-inverse de J0
   
+
   JoTrans = Jo';
   tmp = JoTrans*Jo;
   inVtmp = inv(tmp);
@@ -92,6 +99,16 @@ end
   
 
   JoPseudoInv = inv(tmp)*JoTrans;
+<<<<<<< HEAD
+=======
+>>>>>>> origin/master
+=======
+  %JoTrans = Jo';
+  %tmp = JoTrans*Jo;
+  
+  JoPseudoInv = pinv(Jo);
+>>>>>>> Stashed changes
+>>>>>>> origin/master
   
 % FORWARD MAPPING
 
