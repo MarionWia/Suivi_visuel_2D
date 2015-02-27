@@ -34,11 +34,15 @@ yMin = rect(1,2); % coordonnee y du point d'origine dans l'image crop par rappor
 for (i=1:1:tailleimgTmp(1,1))
     for (j=1:1:tailleimgTmp(1,2))
 
-    trans(1,1) = (xMin + i) + u;
-    trans(1,2) = (yMin + j) + v;      
+    trans(1,1) = (xMin + i) + u; % u a recuperer
+    trans(1,2) = (yMin + j) + v; % v a recuperer   
               
     end
 end
+
+imgTmpS = imresize(imgTmp,s); % s a recuperer
+
+imgTmpR = imrotate(imgTmp,teta); % teta a recuperer
 
 
 

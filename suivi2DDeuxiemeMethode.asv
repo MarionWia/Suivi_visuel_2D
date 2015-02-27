@@ -111,7 +111,7 @@ for (i = 1:tailleimgTmp(1,1))
     transX = (xMin + i) + a0(1,1); % u a recuperer
     transY = (yMin + j) + a0(2,1); % v a recuperer   
         
-    imgTrans(i,j) = [
+    %imgTrans(i,j) = [
     
     end
     end
