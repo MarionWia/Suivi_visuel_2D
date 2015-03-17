@@ -57,18 +57,15 @@ nbPixel = nbligne*nbcolonne;
 
 %Gx=zeros(2*nbligne*nbcolonne,4);
 % Prendre les pixels par rapport au centre de la zone
- centreImCrop = []
- centreImCrop(1,1) = rect(1,1)+ nbcolonne/2,
- centreImCrop(1,2) = rect(1,2)+ nbligne/2,
+ centreImCrop = [];
+ centreImCrop(1,1) = rect(1,1)+ nbcolonne/2;
+ centreImCrop(1,2) = rect(1,2)+ nbligne/2;
 G = [];
 for i=1:nbligne
     for j=1:nbcolonne
-<<<<<<< HEAD
-=======
         
-        G = [G;1 0 -j i;0 1 i j]; 
+        %G = [G;1 0 -j i;0 1 i j]; 
 
->>>>>>> origin/master
         jTranslate = j - nbcolonne/2;
         iTranslate = i - nbligne/2;
         G=[G;1 0 -jTranslate iTranslate;0 1 iTranslate jTranslate]; 
@@ -81,35 +78,21 @@ end
  
 for i =1:nbPixel
     j = 2*i;
-    u = (gradIm(j-1:j, :))';
-    v = G(j-1:j,:);
-    Jo(i,:) = u*v;
+    a = (gradIm(j-1:j, :))';
+    b = G(j-1:j,:);
+    Jo(i,:) = a*b;
     
 end 
   
   % Calcul de la pseudo-inverse de J0
   
-
-  JoTrans = Jo';
-  tmp = JoTrans*Jo;
-  inVtmp = inv(tmp);
-  
  % JoPseudoInv = inVtmp*JoTrans;
   
-  
-
-  JoPseudoInv = inv(tmp)*JoTrans;
-<<<<<<< HEAD
-=======
->>>>>>> origin/master
-=======
   %JoTrans = Jo';
   %tmp = JoTrans*Jo;
   
   JoPseudoInv = pinv(Jo);
->>>>>>> Stashed changes
->>>>>>> origin/master
-  
+
 % FORWARD MAPPING
 
 tailleGrille = size(imgIntensite);
@@ -122,40 +105,30 @@ tailleimgTmp = size(imgTmp);
 xMin = rect(1,1); % coordonnee x du point d'origine dans l'image crop par rapport a l'image initiale
 yMin = rect(1,2); % coordonnee y du point d'origine dans l'image crop par rapport a l'image initiale
 
-for (i = 1:tailleimgTmp(1,1))
-    for (j = 1:tailleimgTmp(1,2))
+% Matrice de transformation affine
+matTransform = [s*cos(teta) s*sin(teta) u; -s*sin(teta) s*cos(teta) v; 0 0 1]
 
-    transX = (xMin + i) + a0(1,1); % u a recuperer
-    transY = (yMin + j) + a0(2,1); % v a recuperer   
-        
-    imgTrans(i,j) = [
-    
-    end
-    end
-    
-    imgTmpR = imrotate(imgTmp,teta); % teta a recuperer
-
-    imgTmpS = imresize(imgTmpR,s); % s a recuperer
-
-
-
+T = maketform('affine',matTransform);
+imTransforme = imtransform(imgIntensite,T);
+figure;
+imshow(imTransforme);
 % Calcul de l'erreur entre R(to) et R(t+dt)
 
 % Image (N°1) Initiale Intensité à to: Iinit
 % Image (N°2) à t+dt : I1
 
-close all;
+%close all;
 % test
 figure;
 subplot(3,1,1)
-imshow(Iinit);
+imshow(imgIntensite);
 title('Image à to');
 subplot(3,1,2)
-imshow(I1);
+imshow(imTransforme);
 title('Image à t+dt');
 
 % matrice erreur
-m_Erreur=Iinit-I1;
+m_Erreur=imTransforme-imgIntensite;
 
 subplot(3,1,3)
 imshow(m_Erreur);
@@ -163,6 +136,8 @@ title('erreur');
 
 % Calcul de l'inverse de S
 Sinv=inv(S);
-
+tailleErreur = size(m_Erreur);
+error = reshape(m_Erreur,tailleErreur(1,1)*tailleErreur(1,2),1);
 % Calcul de delta_a
-delta_a=Sinv*JoPseudoInv*m_Erreur;
+tmp = -1*Sinv*JoPseudoInv;
+delta_a=tmp*double(error);
