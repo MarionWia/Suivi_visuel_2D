@@ -102,7 +102,7 @@ Q3 = [xMin ; yMin+tailleGrille(1,2); 1];
 Q4 = [xMin+tailleGrille(1,1) ; yMin+tailleGrille(1,2);1];
 
 % Matrice de transformation affine
-matTransform = [s*cos(teta) s*sin(teta) u; -s*sin(teta) s*cos(teta) v; 0 0 1]
+matTransform = [s*cos(teta) s*sin(teta) u; -s*sin(teta) s*cos(teta) v; 0 0 1];
 
 % Transformation inverse
 invMatTransform = inv(matTransform);
