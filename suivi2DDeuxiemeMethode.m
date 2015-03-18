@@ -1,21 +1,28 @@
 clear all;
 close all;
 
-imgInit = imread('imageOriginale_respiration.jpg');% Image N°1
+% Chargement de l'Image N°1
+imgInit = imread('imageOriginale_respiration.jpg');
+figure('Name','Image initiale avant crop','NumberTitle','off') 
 imshow(imgInit);
-img = imread('image300_respiration.jpg');% Image N°2
-figure;
+
+% Chargement de l'image N°2
+img = imread('image300_respiration.jpg');
+figure('Name','Image 2','NumberTitle','off') 
 imshow(img);
+
+% Initialisation du jeu de paramètre
 u = 0;
 v = 0;
 teta = 0;
 s = 1;
 
-a0 = [ u ; v ; teta; s];
+a0 = [ u ; v ; teta; s]; % Vecteur contenant les paramètres
 
 
-% Creation de la région d'intéret
+% Creation de la région d'intéret (crop de l'image en nveau de gris)
 [I,rect] = imcrop(imgInit);
+figure('Name','Image Init cropée','NumberTitle','off') 
 imshow(I);
 
 % Conversion de l'image en couleur en intensité
@@ -39,43 +46,38 @@ figure;
 imshow(imgIntensite);
 title('Image intensite de la region d''interet selectionnee sur l''image originale');
 
+% Calcul du gradient sur la région d'interet
 [gradIm] = gradient(imgIntensite);
 
+% matrice de rotation
 Rtr=[cos(teta) sin(teta);-sin(teta) cos(teta)];
 
 S=[(1/s).*Rtr(1,1) (1/s).*Rtr(1,2) 0 0;(1/s)*Rtr(2,1) (1/s)*Rtr(2,2) 0 0;0 0 1 0;0 0 0 1/s];
 
 
 % Calcul de Jo 
-
-
-
 taille = size(imgIntensite);
 nbligne=taille(1,1);
 nbcolonne=taille(1,2);
 nbPixel = nbligne*nbcolonne;
 
-%Gx=zeros(2*nbligne*nbcolonne,4);
 % Prendre les pixels par rapport au centre de la zone
  centreImCrop = [];
  centreImCrop(1,1) = rect(1,1)+ nbcolonne/2;
  centreImCrop(1,2) = rect(1,2)+ nbligne/2;
-G = [];
-for i=1:nbligne
+ 
+ % Calcul de G
+ G = [];
+ for i=1:nbligne
     for j=1:nbcolonne
         
-        %G = [G;1 0 -j i;0 1 i j]; 
-
         jTranslate = j - nbcolonne/2;
         iTranslate = i - nbligne/2;
-        G=[G;1 0 -jTranslate iTranslate;0 1 iTranslate jTranslate]; 
-
-            
+        G=[G;1 0 -jTranslate iTranslate;0 1 iTranslate jTranslate];      
     end
-end
-
- %Jo =[nbPixel;4];
+ end
  
+% Calcul de Jo
 for i =1:nbPixel
     j = 2*i;
     a = (gradIm(j-1:j, :))';
@@ -85,40 +87,70 @@ for i =1:nbPixel
 end 
   
   % Calcul de la pseudo-inverse de J0
-  
- % JoPseudoInv = inVtmp*JoTrans;
-  
-  %JoTrans = Jo';
-  %tmp = JoTrans*Jo;
-  
   JoPseudoInv = pinv(Jo);
 
 % FORWARD MAPPING
-
 tailleGrille = size(imgIntensite);
-
-% Matrice de 0 
-imgTmp = zeros(tailleGrille);
-
-tailleimgTmp = size(imgTmp);
 
 xMin = rect(1,1); % coordonnee x du point d'origine dans l'image crop par rapport a l'image initiale
 yMin = rect(1,2); % coordonnee y du point d'origine dans l'image crop par rapport a l'image initiale
 
+% Definition des quatre points de la grille dans l'image initiale
+Q1 = [xMin ; yMin; 1];
+Q2 = [xMin+tailleGrille(1,1); yMin; 1];
+Q3 = [xMin ; yMin+tailleGrille(1,2); 1];
+Q4 = [xMin+tailleGrille(1,1) ; yMin+tailleGrille(1,2);1];
+
 % Matrice de transformation affine
 matTransform = [s*cos(teta) s*sin(teta) u; -s*sin(teta) s*cos(teta) v; 0 0 1]
 
-T = maketform('affine',matTransform);
-imTransforme = imtransform(imgIntensite,T);
-figure;
+% Transformation inverse
+invMatTransform = inv(matTransform);
+
+% Application de la transformation pour trouver les quatre coins dans la
+% deuxième image
+Q1_imtransform = matTransform*Q1;
+Q2_imtransform = matTransform*Q2;
+Q3_imtransform = matTransform*Q3;
+Q4_imtransform = matTransform*Q4;
+
+%  Creation de l'image a l'interieur des qautre points Q_imtransform
+if(Q1_imtransform(1,1) > Q3_imtransform(1,1))
+    debX = Q3_imtransform(1,1)
+else
+   debX = Q1_imtransform(1,1) 
+end
+if(Q2_imtransform(1,1) > Q4_imtransform(1,1))
+    finX = Q2_imtransform(1,1)
+else
+  finX = Q4_imtransform(1,1)  
+end
+
+if(Q1_imtransform(2,1) > Q2_imtransform(2,1))
+    debY = Q2_imtransform(2,1)
+else
+   debY = Q1_imtransform(2,1) 
+end
+if(Q3_imtransform(2,1) > Q4_imtransform(2,1))
+    finY = Q4_imtransform(2,1)
+else
+  finY = Q3_imtransform(2,1)  
+end
+im2Grille = I1(debX:finX,debY:finY);
+figure('Name','FIGURE TEST','NumberTitle','off') 
+imshow(im2Grille);
+
+% calcul de l'image ou on a appliqué la transformation inverse
+T = maketform('affine',invMatTransform);
+imTransforme = imtransform(im2Grille,T);
+figure('Name','region d"interet apres le warping','NumberTitle','off');
 imshow(imTransforme);
+
+
 % Calcul de l'erreur entre R(to) et R(t+dt)
+% Image (N°1) Initiale Intensité à to: imgIntensite
+% Image (N°2) à t+dt : imTransforme
 
-% Image (N°1) Initiale Intensité à to: Iinit
-% Image (N°2) à t+dt : I1
-
-%close all;
-% test
 figure;
 subplot(3,1,1)
 imshow(imgIntensite);
@@ -126,9 +158,13 @@ title('Image à to');
 subplot(3,1,2)
 imshow(imTransforme);
 title('Image à t+dt');
+tailleImTransforme = size(imTransforme)
+testT = tailleImTransforme(1,1) -1
+testT1 = tailleImTransforme(1,2) -1
+imtransformReduite = imTransforme(1:testT,1:testT1);
 
 % matrice erreur
-m_Erreur=imTransforme-imgIntensite;
+m_Erreur=imtransformReduite-imgIntensite;
 
 subplot(3,1,3)
 imshow(m_Erreur);
@@ -138,6 +174,10 @@ title('erreur');
 Sinv=inv(S);
 tailleErreur = size(m_Erreur);
 error = reshape(m_Erreur,tailleErreur(1,1)*tailleErreur(1,2),1);
+
 % Calcul de delta_a
 tmp = -1*Sinv*JoPseudoInv;
 delta_a=tmp*double(error);
+
+% mise à jour de a0
+a0 = a0 + delta_a;
