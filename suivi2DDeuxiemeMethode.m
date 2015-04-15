@@ -29,22 +29,11 @@ figure('Name','Image Init cropée','NumberTitle','off')
 imshow(I);
 
 % Conversion de l'image en couleur en intensité
-R = imgInit(:,:,1);
-V = imgInit(:,:,2);
-B = imgInit(:,:,3);
 
-R1 = img(:,:,1);
-V1 = img(:,:,2);
-B1 = img(:,:,3);
+Iinit=greyconversion(imgInit); % Création de l'image intensité à partir de l'image originale : Image N°1
+I1=greyconversion(img); % Image N°2
+imgIntensite=greyconversion(I); % Image région d'intérêt
 
-R2 = I(:,:,1);
-V2 = I(:,:,2);
-B2 = I(:,:,3);
-
-% On creer une image intensite a partir de l'image originale
-Iinit = 0.21*R + 0.72*V + 0.07*B;% Image N°1
-I1 = 0.21*R1 + 0.72*V1 + 0.07*B1;% Image N°2
-imgIntensite = 0.21*R2 + 0.72*V2 + 0.07*B2; % Image région d'intérêt
 figure;
 imshow(imgIntensite);
 title('Image intensite de la region d''interet selectionnee sur l''image originale');
@@ -89,6 +78,10 @@ JoPseudoInv = pinv(Jo);
 % Realisation du forward mapping
 imTransforme = forwardMapping( rect, s, teta, u,v,I1  );
 
+% Image (N°1) Initiale Intensité cropée à to: imgIntensite
+% Image (N°2) cropée à t+dt : 
+
+
 % Calcul de l'erreur entre R(to) et R(t+dt)
 % Image (N°1) Initiale Intensité à to: imgIntensite
 % Image (N°2) à t+dt : imTransforme
@@ -96,9 +89,15 @@ imTransforme = forwardMapping( rect, s, teta, u,v,I1  );
 figure;
 subplot(2,1,1)
 imshow(imgIntensite);
+
 title('Image à to');
 subplot(2,1,2)
 imshow(imTransforme);
+
+%title('Image à to cropée');
+%subplot(3,1,2)
+%imshow(X);% en attente du code de Marion
+
 title('Image à t+dt');
 tailleImTransforme = size(imTransforme);
 
@@ -106,6 +105,15 @@ tailleImTransforme = size(imTransforme);
 m_Erreur=abs(imTransforme-imgIntensite);
 
 figure;
+<<<<<<< Updated upstream
+=======
+
+m_error=reshape(m_Erreur,nbPixel,1);
+
+
+subplot(3,1,3)
+
+>>>>>>> Stashed changes
 imshow(m_Erreur,[]);
 title('erreur');
 
@@ -115,8 +123,14 @@ tailleErreur = size(m_Erreur);
 error = reshape(m_Erreur,tailleErreur(1,1)*tailleErreur(1,2),1);
 
 % Calcul de delta_a
+
 tmp = -1*Sinv*JoPseudoInv;
 delta_a=tmp*double(error);
 
+
 % mise à jour de a0
 a0 = a0 + delta_a;
+
+%delta_a=-Sinv*JoPseudoInv*m_error;
+
+
