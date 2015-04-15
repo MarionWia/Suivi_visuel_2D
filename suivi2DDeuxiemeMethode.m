@@ -42,32 +42,19 @@ title('Image intensite de la region d''interet selectionnee sur l''image origina
 [gradIm] = gradient(imgIntensite);
 
 % matrice de rotation
-Rtr=[cos(teta) sin(teta);-sin(teta) cos(teta)];
+Rtr=[cos(a0(3,1)) sin(a0(3,1));-sin(a0(3,1)) cos(a0(3,1))];
 
-S=[(1/s).*Rtr(1,1) (1/s).*Rtr(1,2) 0 0;(1/s)*Rtr(2,1) (1/s)*Rtr(2,2) 0 0;0 0 1 0;0 0 0 1/s];
+S=[(1/a0(4,1)).*Rtr(1,1) (1/a0(4,1)).*Rtr(1,2) 0 0;(1/a0(4,1))*Rtr(2,1) (1/a0(4,1))*Rtr(2,2) 0 0;0 0 1 0;0 0 0 1/a0(4,1)];
 
 
-% Calcul de Jo
+% Calcul de la taille de l'image
 taille = size(imgIntensite);
 nbligne=taille(1,1);
 nbcolonne=taille(1,2);
 nbPixel = nbligne*nbcolonne;
 
-% Prendre les pixels par rapport au centre de la zone
-centreImCrop = [];
-centreImCrop(1,1) = rect(1,1)+ rect(1,3)/2;
-centreImCrop(1,2) = rect(1,2)+ rect(1,4)/2;
-
 % Calcul de G
-G = [];
-for i=1:nbligne
-    for j=1:nbcolonne
-        
-        jTranslate = j - nbcolonne/2;
-        iTranslate = i - nbligne/2;
-        G=[G;1 0 -jTranslate iTranslate;0 1 iTranslate jTranslate];
-    end
-end
+G = GCalc(nbligne, nbcolonne);
 
 % calcul de Jo
 Jo = JCalc( nbPixel, G,gradIm );
@@ -76,44 +63,25 @@ Jo = JCalc( nbPixel, G,gradIm );
 JoPseudoInv = pinv(Jo);
 
 % Realisation du forward mapping
-imTransforme = forwardMapping( rect, s, teta, u,v,I1  );
-
-% Image (N°1) Initiale Intensité cropée à to: imgIntensite
-% Image (N°2) cropée à t+dt : 
-
+imTransforme = forwardMapping( rect, a0(4,1), a0(3,1), a0(1,1),a0(2,1),I1  );
 
 % Calcul de l'erreur entre R(to) et R(t+dt)
 % Image (N°1) Initiale Intensité à to: imgIntensite
 % Image (N°2) à t+dt : imTransforme
-
 figure;
 subplot(2,1,1)
-imshow(imgIntensite);
-
+imshow(imgIntensite); % Affichage de l'image a to
 title('Image à to');
 subplot(2,1,2)
-imshow(imTransforme);
-
-%title('Image à to cropée');
-%subplot(3,1,2)
-%imshow(X);% en attente du code de Marion
-
+imshow(imTransforme); % Affichage de l'image a t+dt
 title('Image à t+dt');
+
 tailleImTransforme = size(imTransforme);
 
 % matrice erreur
 m_Erreur=abs(imTransforme-imgIntensite);
 
 figure;
-<<<<<<< Updated upstream
-=======
-
-m_error=reshape(m_Erreur,nbPixel,1);
-
-
-subplot(3,1,3)
-
->>>>>>> Stashed changes
 imshow(m_Erreur,[]);
 title('erreur');
 
@@ -123,14 +91,10 @@ tailleErreur = size(m_Erreur);
 error = reshape(m_Erreur,tailleErreur(1,1)*tailleErreur(1,2),1);
 
 % Calcul de delta_a
-
 tmp = -1*Sinv*JoPseudoInv;
 delta_a=tmp*double(error);
 
-
 % mise à jour de a0
 a0 = a0 + delta_a;
-
-%delta_a=-Sinv*JoPseudoInv*m_error;
 
 
