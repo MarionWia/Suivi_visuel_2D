@@ -7,11 +7,14 @@ figure('Name','Image initiale avant crop','NumberTitle','off')
 imshow(imgInit);
 
 % Chargement de l'image N°2
-img = imread('imageOriginale_respiration.jpg');
+img = imread('image_2_respiration.jpg');
 figure('Name','Image 2','NumberTitle','off')
 imshow(img);
 
 % Initialisation du jeu de paramètre
+% u et v définissent la translation
+% teta est l'angle de rotation
+% s est le facteur d'échelle
 u = 0;
 v = 0;
 teta = 0;
@@ -20,7 +23,7 @@ s = 1;
 a0 = [ u ; v ; teta; s]; % Vecteur contenant les paramètres
 
 
-% Creation de la région d'intéret (crop de l'image en nveau de gris)
+% Creation de la région d'intéret (crop de l'image en niveau de gris)
 [I,rect] = imcrop(imgInit);
 figure('Name','Image Init cropée','NumberTitle','off')
 imshow(I);
@@ -77,77 +80,14 @@ for i=1:nbligne
     end
 end
 
-% Calcul de Jo
-for i =1:nbPixel
-    j = 2*i;
-    a = (gradIm(j-1:j, :))';
-    b = G(j-1:j,:);
-    Jo(i,:) = a*b;
-    
-end
+% calcul de Jo
+Jo = JCalc( nbPixel, G,gradIm );
 
 % Calcul de la pseudo-inverse de J0
 JoPseudoInv = pinv(Jo);
 
-% FORWARD MAPPING
-xMin = rect(1,1); % coordonnee x du point d'origine dans l'image crop par rapport a l'image initiale
-yMin = rect(1,2); % coordonnee y du point d'origine dans l'image crop par rapport a l'image initiale
-
-% Definition des quatre points de la grille dans l'image initiale
-Q1 = [xMin ; yMin; 1]
-Q2 = [xMin+rect(1,3); yMin; 1]
-Q3 = [xMin ; yMin+rect(1,4); 1]
-Q4 = [xMin+rect(1,3) ; yMin+rect(1,4);1]
-
-% Matrice de transformation affine
-matTransform = [s*cos(teta) s*sin(teta) u; -s*sin(teta) s*cos(teta) v; 0 0 1];
-
-% Transformation inverse
-invMatTransform = inv(matTransform);
-
-% Application de la transformation pour trouver les quatre coins dans la
-% deuxième image
-Q1_imtransform = matTransform*Q1
-Q2_imtransform = matTransform*Q2
-Q3_imtransform = matTransform*Q3
-Q4_imtransform = matTransform*Q4
-
-%  Creation de l'image a l'interieur des qautre points Q_imtransform
-% if(Q1_imtransform(1,1) > Q3_imtransform(1,1))
-%     debX = Q3_imtransform(1,1);
-% else
-%     debX = Q1_imtransform(1,1);
-% end
-% if(Q2_imtransform(1,1) > Q4_imtransform(1,1))
-%     finX = Q2_imtransform(1,1);
-% else
-%     finX = Q4_imtransform(1,1);
-% end
-% 
-% if(Q1_imtransform(2,1) > Q2_imtransform(2,1))
-%     debY = Q2_imtransform(2,1);
-% else
-%     debY = Q1_imtransform(2,1);
-% end
-% if(Q3_imtransform(2,1) > Q4_imtransform(2,1))
-%     finY = Q4_imtransform(2,1);
-% else
-%     finY = Q3_imtransform(2,1);
-% end
-debX = Q1_imtransform(1,1);
-finX = Q2_imtransform(1,1);
-debY = Q1_imtransform(2,1);
-finY = Q4_imtransform(2,1);
-im2Grille = I1(debY:finY,debX:finX);
-figure('Name','FIGURE TEST','NumberTitle','off')
-imshow(im2Grille);
-
-% calcul de l'image ou on a appliqué la transformation inverse
-T = affine2d(invMatTransform');
-imTransforme = imwarp(im2Grille,T);
-figure('Name','region d"interet apres le warping','NumberTitle','off');
-imshow(imTransforme);
-
+% Realisation du forward mapping
+imTransforme = forwardMapping( rect, s, teta, u,v,I1  );
 
 % Calcul de l'erreur entre R(to) et R(t+dt)
 % Image (N°1) Initiale Intensité à to: imgIntensite
@@ -166,7 +106,7 @@ tailleImTransforme = size(imTransforme);
 m_Erreur=abs(imTransforme-imgIntensite);
 
 figure;
-imshow(m_Erreur);
+imshow(m_Erreur,[]);
 title('erreur');
 
 % Calcul de l'inverse de S
