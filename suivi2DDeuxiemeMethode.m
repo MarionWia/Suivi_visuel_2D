@@ -39,8 +39,7 @@ imshow(imgIntensite);
 title('Image intensite de la region d''interet selectionnee sur l''image originale');
 
 % Calcul du gradient sur la région d'interet
-
-[gradIm] = gradient_sobel(imgIntensite);
+[gradIm] = gradient(imgIntensite);
 
 % matrice de rotation
 Rtr=[cos(a0(3,1)) sin(a0(3,1));-sin(a0(3,1)) cos(a0(3,1))];
