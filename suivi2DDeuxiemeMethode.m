@@ -39,8 +39,8 @@ imshow(imgIntensite);
 title('Image intensite de la region d''interet selectionnee sur l''image originale');
 
 % Calcul du gradient sur la région d'interet
-[gradIm] = gradient(imgIntensite);
-
+[gradIx, gradIy] = gradient_sobel(imgIntensite);
+gradIm = [gradIx ; gradIy] 
 % matrice de rotation
 Rtr=[cos(a0(3,1)) sin(a0(3,1));-sin(a0(3,1)) cos(a0(3,1))];
 
@@ -57,7 +57,14 @@ nbPixel = nbligne*nbcolonne;
 G = GCalc(nbligne, nbcolonne);
 
 % calcul de Jo
-Jo = JCalc( nbPixel, G,gradIm );
+for i =1:nbPixel
+    j = 2*i;
+    a = (gradIm(j-1:j, :))'
+    b = G(j-1:j,:)
+    Jo(i,:) = double(a)*b;
+    
+end
+%Jo = JCalc( nbPixel, G,gradIm );
 
 % Calcul de la pseudo-inverse de J0
 JoPseudoInv = pinv(Jo);
@@ -96,5 +103,3 @@ delta_a=tmp*double(error);
 
 % mise à jour de a0
 a0 = a0 + delta_a;
-
-

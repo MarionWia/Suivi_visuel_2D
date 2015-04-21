@@ -4,8 +4,8 @@ function [ Jo ] = JCalc( nbPixel, G,gradIm )
 % Calcul de Jo
 for i =1:nbPixel
     j = 2*i;
-    a = (gradIm(j-1:j, :))';
-    b = G(j-1:j,:);
+    a = (gradIm(j-1:j, :))'
+    b = uint8(G(j-1:j,:))
     Jo(i,:) = a*b;
     
 end

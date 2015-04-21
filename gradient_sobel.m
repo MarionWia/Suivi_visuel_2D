@@ -1,5 +1,4 @@
 % ----- Calcul du gradient avec l'information d'intensite
-
 function [ grad_Ix1 , grad_Iy1 ] = gradient_sobel( grey_image )
 
 h  = fspecial('sobel');
@@ -17,11 +16,10 @@ grad_x = imfilter( grey_image , h' , 'replicate' );
 % gradI = [gradIx ; gradIy]; % vecteur gradient 1*2
 
 % Enlever les bords qui ont été rajouté avec le calcul du gradient
-tailleGrad = size(gradIx);
+tailleGrad = size(grad_x);
 gradIxDim = grad_x(2:(tailleGrad(1,1)-1) , 2:(tailleGrad(1,2)-1));
-dim = size(gradIxDim);
 gradIyDim = grad_y(2:(tailleGrad(1,1)-1) , 2:(tailleGrad(1,2)-1));
-
+dim = size(gradIxDim);
 % Modifier la taille de la matrice: créer un vecteur ligne
 grad_Ix1 = reshape(gradIxDim,dim(1,1)*dim(1,2),1);
 grad_Iy1 = reshape(gradIyDim,dim(1,1)*dim(1,2),1);
