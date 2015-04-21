@@ -1,8 +1,10 @@
 #include "mainwindow.h"
+#include "suivi2DFunctions.h"
 #include "ui_mainwindow.h"
 #include <QPixmap>
 #include <QImage>
 #include <QDebug>
+#include <QRect>
 #include <iostream>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -10,25 +12,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    // Affichage de l'image initiale en niveau de gris
     QPixmap pix("/Users/benedictefahrer/Documents/TPS/2A/Suivi_visuel_2D/projet2D/imageOriginale_respiration.jpg");
-    ui->imageLabel->setPixmap(pix);
+    m_pix = pix;
+    m_image = intensity(m_pix);
+    ui->imageLabel->setPixmap( QPixmap::fromImage(m_image) );
     ui->imageLabel->setScaledContents(true);
     ui->imageLabel->adjustSize();
 
 
-    // mettre l'image en niveau de gris
-    QImage image = pix.toImage();
-            for(int x = 0; x < image.width(); x++)
-            {
-                for(int y = 0; y < image.height(); y++)
-                {
-                    int gray =  qGray(image.pixel(x,y));
-                    image.setPixel(x,y,qRgb(gray,gray,gray));
-                }
-            }
-        ui->labelImage2->setPixmap( QPixmap::fromImage(image) );
-        ui->labelImage2->setScaledContents(true);
-        ui->labelImage2->adjustSize();
 
 }
 
@@ -43,16 +36,27 @@ void MainWindow::mousePressEvent( QMouseEvent * event)
     compteur ++;
     if(compteur == 1)
     {
-        x1 = event->x();
-        y1 = event->y();
-        std::cout << "coordonnée du premier point"<<x1 << " "<< y1<<std::endl;
+        int x = event->x();
+        int y = event->y();
+        m_pointGauche.setX(x);
+        m_pointGauche.setY(y);
+        std::cout << "coordonnée du premier point"<< m_pointGauche.x()  << " "<< m_pointGauche.y() <<std::endl;
 
     }
     else if(compteur == 2)
     {
-        x2 = event->x();
-        y2 = event->y();
-        std::cout << "coordonnée du deuxième point"<<x2 << " "<< y2<<std::endl;
+        int x = event->x();
+        int y = event->y();
+        m_pointDroit.setX(x);
+        m_pointDroit.setY(y);
+        std::cout << "coordonnée du deuxième point"<<m_pointDroit.x()  << " "<< m_pointDroit.y() <<std::endl;
+
+        // crop image
+        QPixmap imageCrop = cropImage(QPixmap::fromImage(m_image),m_pointGauche,m_pointDroit);
+        // affichage de l'image crop
+        ui->labelImage2->setPixmap(imageCrop);
+        ui->labelImage2->setScaledContents(true);
+        ui->labelImage2->adjustSize();
     }
     else
     {

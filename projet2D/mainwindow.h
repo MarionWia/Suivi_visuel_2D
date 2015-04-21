@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QKeyEvent>
+#include <QPoint>
 
 namespace Ui {
 class MainWindow;
@@ -21,10 +22,10 @@ protected:
 
 private:
     Ui::MainWindow *ui;
-    int x1;
-    int y1;
-    int x2;
-    int y2;
+    QPoint m_pointGauche;
+    QPoint m_pointDroit;
+    QPixmap m_pix;
+    QImage m_image;
 };
 
 #endif // MAINWINDOW_H
