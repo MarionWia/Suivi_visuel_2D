@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     // Affichage de l'image initiale en niveau de gris
-    QPixmap pix("C:/Users/Marion/Documents/GitHub/Suivi_visuel_2D/image_2_respiration.jpg");
+    QPixmap pix("/Users/benedictefahrer/Documents/TPS/2A/Suivi_visuel_2D/projet2D/imageOriginale_respiration.jpg");
     m_pix = pix;
     m_image = intensity(m_pix);
     ui->imageLabel->setPixmap( QPixmap::fromImage(m_image) );
