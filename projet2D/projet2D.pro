@@ -20,3 +20,11 @@ HEADERS  += mainwindow.h \
     suivi2DFunctions.h
 
 FORMS    += mainwindow.ui
+
+INCLUDEPATH += /opt/local/include \
+
+CONFIG += c++11
+QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.9
+
+LIBS += -L/opt/local/lib -lopencv_core -lopencv_highgui -lopencv_ml -lopencv_video -lopencv_imgproc
+

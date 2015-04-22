@@ -16,9 +16,17 @@ QImage intensity(QPixmap pixImage)
             return image;
 }
 
-QPixmap cropImage(QPixmap image, QPoint pointGauche, QPoint pointDroit)
+QImage cropImage(QImage image, QPoint pointGauche, QPoint pointDroit)
 {
-    QRect rect(pointGauche,pointDroit);
-    QPixmap imgCroped = image.copy(rect);
-    return imgCroped;
+    QImage imCrop = image.copy(QRect(pointGauche,pointDroit));
+    return imCrop;
+
+}
+
+
+cv::Mat calculGradient(cv::Mat imgSource)
+{
+    cv::Mat imgGrad;
+    cv::Sobel(imgSource, imgGrad, -1, 1, 1, 3, 1, 0, cv::BORDER_DEFAULT );
+    return imgGrad;
 }
