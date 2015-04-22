@@ -1,5 +1,6 @@
 #include "suivi2DFunctions.h"
 #include <QRect>
+#include <iostream>
 
 QImage intensity(QPixmap pixImage)
 {
@@ -18,7 +19,10 @@ QImage intensity(QPixmap pixImage)
 
 QImage cropImage(QImage image, QPoint pointGauche, QPoint pointDroit)
 {
-    QImage imCrop = image.copy(QRect(pointGauche,pointDroit));
+    int longueur = abs(pointGauche.x() - pointDroit.x());
+    int largeur = abs(pointGauche.y() - pointDroit.y());
+    std::cout<<"hauteur du rectangle "<< largeur << " longueur du rect "<< longueur <<std::endl;
+    QImage imCrop = image.copy(QRect(pointGauche.x(), pointGauche.y(),longueur, largeur));
     return imCrop;
 
 }

@@ -42,6 +42,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->imageLabel->setScaledContents(true);
     ui->imageLabel->adjustSize();
 
+
+     this->update();
+
     // Calcul du gradient
     cv::Mat gradIm = calculGradient(imageGrey);
     cv::Mat temp(gradIm.cols,gradIm.rows,gradIm.type());
@@ -81,6 +84,11 @@ void MainWindow::mousePressEvent( QMouseEvent * event)
         ui->labelImage2->setPixmap(QPixmap::fromImage(imageCrop));
         ui->labelImage2->setScaledContents(true);
         ui->labelImage2->adjustSize();
+
+        this->update();
+
+
+
     }
     else
     {
@@ -88,4 +96,22 @@ void MainWindow::mousePressEvent( QMouseEvent * event)
     }
 
 
+}
+
+void MainWindow::paintEvent(QPaintEvent *)
+{
+    // Affichage des lignes
+    QPainter painter (ui->imageLabel);
+    //painter.setRenderHint((QPainter::Antialiasing, true));
+    painter.setPen(QPen(Qt::green, 3, Qt::DashDotLine, Qt::RoundCap, Qt::RoundJoin));
+    painter.drawLine(m_pointGauche, m_pointDroit);
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+    // Calcul de la matrice de rotation
+//    cv::Mat img;
+
+//    cv::Mat M = numpy.float32([[(1/m_s)*cos(m_teta),(1/m_s)*sin(m_teta),0,0],[(1/m_s)*(-sin(m_teta)),(1/m_s)*cos(m_teta),0,0],[0,0,1,0],[0,0,0,1/m_s]]);
+//    matAffine = cv2.warpAffine(img,M,img.size());
 }

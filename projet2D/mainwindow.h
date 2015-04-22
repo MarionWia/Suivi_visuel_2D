@@ -19,6 +19,10 @@ public:
 
 protected:
    void mousePressEvent( QMouseEvent * event);
+   void paintEvent(QPaintEvent *);
+
+private slots:
+   void on_pushButton_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -26,6 +30,12 @@ private:
     QPoint m_pointDroit;
     QPixmap m_pix;
     QImage m_image;
+
+    int m_s;
+    int m_u;
+    int m_v;
+    int m_teta;
+
 };
 
 #endif // MAINWINDOW_H
